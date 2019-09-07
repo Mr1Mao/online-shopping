@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.AddressMapper">
+
+    <!--        获取地址信息-->
+    <select id="getAddressInfo" resultType="com.entity.Address">
+        SELECT * FROM address WHERE u_id=#{u_id}
+    </select>
+    <select id="getAddress" resultType="com.entity.Address">
+        SELECT * FROM address WHERE u_id=#{u_id}  and add_id=#{add_id}
+    </select>
+</mapper>

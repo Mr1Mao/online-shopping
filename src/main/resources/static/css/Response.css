@@ -1,0 +1,88 @@
+@media only screen and (max-width :1700px) {
+	.shop-s{
+		margin: 0 35px;
+	}
+	.shop-show{
+	}
+}
+@media only screen and (max-width :1500px) {
+	.shop{
+		margin: 0 20px;
+	}
+	.shop-show{
+		width: 90%;
+	}
+	.foot-box{
+		padding-left: 150px;
+	}
+	.shop-s{
+		margin: 0 30px;
+	}
+}
+@media only screen and (max-width :1350px) {
+	.background-image{
+		width:100%;
+		height: auto;
+	}
+	.shop-show{
+		width: 95%;
+	}
+	.left-title{
+		margin-left: -100px;
+	}
+	.shop{
+		margin: 0 20px;
+	}
+	.foot-box{
+		padding-left: 150px;
+	}
+	.foot-center,.foot-right,.foot-left{
+		margin: 0 45px;
+	}
+	.shop-s{
+		margin: 0 30px;
+	}
+
+}
+@media only screen and (max-width :1267px) {
+	.part-2{
+		border-top: 1px solid rgb(244, 182, 19,0);
+	}
+	.videolan{
+		margin: 0 auto;
+		margin-top: 150px;
+		float: none;
+	}
+	.right-2{
+		float: none;
+		margin: 100px auto;
+		margin-bottom: 0;
+	}
+	.left-title{
+		margin-left: -150px;
+	}
+	.shop-s{
+		margin: 0 40px;
+	}
+}
+@media only screen and (max-width :1200px) {
+	.left-title{
+		margin-left: -200px;
+	}
+	.shop{
+		margin: 0 10px;
+	}
+	.foot-box{
+		padding-left: 50px;
+	}
+	.foot-center,.foot-right,.foot-left{
+		margin: 0 30px;
+	}
+}
+@media only screen and (max-width :1000px) {
+	.shop-s{
+		margin: 0 30px;
+	}
+}
+@media only screen and (max-width :600px) {
+}

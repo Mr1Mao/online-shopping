@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.LoginMapper">
+
+    <select id="getUserBy" resultType="com.entity.User">
+        select * from user where username=#{username}
+    </select>
+
+    <insert id="register" useGeneratedKeys="true" keyProperty="u_id">
+        INSERT INTO user(username,password,email,phone,registrationDate,property) VALUES (#{username},#{password},#{email},#{phone},#{registrationDate},#{property})
+    </insert>
+    <update id="property">
+        update user set property = property-#{Property} where u_id=#{u_id}
+    </update>
+</mapper>

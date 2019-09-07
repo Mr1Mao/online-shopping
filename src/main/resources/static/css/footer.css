@@ -1,0 +1,66 @@
+.foot-box{
+	width: 100%;
+	height: auto;
+	background-color:rgba(0, 0, 0, 1) ;
+}
+.bottom{
+	width: 100%;
+	height: 60px;
+	background-color: white;
+}
+.foot-center,.foot-right,.foot-left{
+	width: 250px;
+	height: 100%;
+	/* background-color: red; */
+	float: left;
+	margin: 0 60px;
+	color: white;
+}
+.foot-left{
+	font-size: 1.6rem;
+}
+.foot-left li{
+		margin: 20px auto;
+		margin-left: 75px;
+}
+.foot-center,.foot-right{
+	padding-top: 40px;
+}
+.foot-center li{
+	margin: 20px auto;
+	/* margin-left: 65px; */
+}
+.foot-box{
+	padding-left: 200px;
+}
+.foot-logo{
+	width: 100px;
+	height: 100px;
+	/* background-color: #FFD700; */
+	margin: 20px auto;
+}
+
+.contact-bt{
+	width: 200px;
+	height: 45px;
+	border:2px solid rgb(244, 182, 19);
+	line-height: 42px;
+	font-size: 1.5rem;
+	margin: 50px 0;
+	color: rgb(244, 182, 19);
+	cursor: pointer;
+}
+.contact-bt:hover{
+	background-color: rgb(244, 180, 19);
+	color: white;
+}
+.bottom p{
+	/* letter-spacing:2px */
+	padding-top: 20px;
+}
+.foot-box a{ color: white;}
+.foot-box a:hover{  color: gold;}
+.foot-logo img{
+	width: 100%;
+	height: 100%;
+}

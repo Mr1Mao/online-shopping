@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<link rel="stylesheet"href="css/public.css">
+		<link rel="stylesheet"href="css/header.css">
+		<link rel="stylesheet"href="css/shop.css">
+		<link rel="stylesheet"href="css/footer.css">
+		<link rel="stylesheet"href="css/Response.css">
+	</head>
+	<body>
+	<header>
+		<div id="head-box">
+			<div id="logo"><a href="index.html"><img src="img/LOGO.png"></a></div>
+			<nav class="menu" role="navigation">
+				<ul>
+					<li><a href="index.html">首页</a></li>
+					<li style="color: gold;">商品
+						<ul class="Subdirectories">
+							<li><a href="shop.html">热门商品</a></li>
+							<li><a href="shop.html">最新上市</a></li>
+						</ul>
+					</li>
+					<li>关于</li>
+					<li>客服</li>
+				</ul>
+			</nav>
+			<form action="" class="Search-form">
+				<input type="text" class="Search  form-control"  placeholder="Search">
+				<button type="submit" class="btn-Search"><img src="img/Search.png"></button>
+			</form>
+			<div class="user" v-if="!isLogin">
+				<div class="login"><a href="helloLogin">登录</a></div>
+				<div class="register"><a href="helloLogin">注册</a></div>
+			</div>
+			<div class="Landed"  v-if="isLogin">
+				<div class="cart_btn"><a href="cart"><img src="img/cart.png"></a></div>
+				<div class="head_portrait" >
+					<img src="img/user.png" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+					<div class="user_center" v-if="userCenterShow" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+						<!-- @mouseenter="onMousein()" @mouseleave="onMouseout()" -->
+						<ul>
+							<li v-text="userinfo.username"></li>
+							<li><a href="confirm_order.html?all=1" style="color: white">我的订单</a></li>
+							<li><a href="/cancellation" style="color: white">退出登录</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+		<content>
+			<div id="main-top">
+				<div class="top-left">
+					<div class="top-title"><p class="text-center">SHOP/商城</p></div>
+				</div>
+				<div class="top-right"><img src="img/huaban_qingnian-008.jpg" ></div>
+				<div style="clear: both;"></div>
+			</div>
+			<div id="main">
+				<div class="shop-show">
+					<div class="shop-s" v-for="(item,index) in items" @click="commodity(item.id)">
+						<img :src="item.img" >
+						<div class="shop-info">
+							<h4 style="color: rgb(121, 121, 121); height: 40px" v-text="item.name"></h4>
+							<h4 v-text="'￥' + item.price"></h4>
+						</div>
+					</div>
+					<div style="clear: both;"></div>
+					<div class="page">
+						<ul class="pagination pagination-lg">
+							<li @click="previousPage()" style="cursor: pointer"><a>&laquo;</a></li>
+							<li v-for="count in pageNum" @click="goPage(count)" style="cursor: pointer"><a v-text="count"></a></li>
+							<li @click="nextPage()" v-if="!(currentPage==pageNum)" style="cursor: pointer"><span>&raquo;</span></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</content>
+		<footer>
+			<div class="foot-box">
+				<div class="foot-left">
+					<div class="foot-logo"><img src="img/LOGO.png" ></div>
+					<ul>
+						<li><a href="index.html">首页</a></li>
+						<li>商品中心</li>
+						<li>关于企业</li>
+						<li>客服服务</li>
+					</ul>
+				</div>
+				<div class="foot-center">
+					<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">联系我们</h2>
+					<ul>
+						<li>Tel：123-456-7890</li>
+						<li>Email：mao1195419991@163.com</li>
+						<li>地址：杭州市江干区</li>
+					</ul>
+				</div>
+				<div class="foot-right">
+					<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">加入我们</h2>
+					<h4>填写信息</h4>
+					<div class="contact-bt"><p class="text-center">联系我们！</p></div>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+			<div class="bottom">
+				<p class="text-center">法律声明&nbsp;|&nbsp;隐私政策&nbsp;|&nbsp;购物付款&nbsp;|&nbsp;类型服务&nbsp;|&nbsp;付款类型&nbsp;|&nbsp;支付方式&nbsp;|&nbsp;产品售后与申诉服务&nbsp;|&nbsp;投诉与申诉&nbsp;|&nbsp;举报知识产权维护&nbsp;</p>
+			</div>
+		</footer>
+	</body>
+	<script src="js/header.js"></script>
+	<script>
+		var a = new Vue({
+			el:'#main',
+			data:{
+				items:[],
+				currentPage:1,
+				currIndex:0,
+				pageSize:12,
+				pageNum:0,
+			},
+			created: function () {
+				axios.post('/productList', {			//AJAX获取数据
+					currIndex:0,
+					pageSize:12,
+				}).then((response) => {
+					this.items = response.data.productList;
+					if(response.data.pageNum % 12 == 0){
+						this.pageNum = response.data.pageNum / 12;
+					}else{
+						this.pageNum =parseInt(response.data.pageNum / 12)+1;
+					}
+					// console.log(response)
+				}).catch(function (error) {
+					console.log(error);
+				});
+			},
+			methods:{
+				shop(){
+					window.location.href="shop.html";
+				},
+				commodity(id){
+					window.open("/items.html?id="+id);
+				},
+				goPage(count){
+					this.currentPage = count;
+					this.currIndex = (this.currentPage-1)*this.pageSize;
+					this.requestA(this.currIndex,this.pageSize);
+				},
+				nextPage(){
+					if(this.currentPage<this.pageNum) {
+						this.currentPage+=1;
+						this.currIndex = (this.currentPage-1)*this.pageSize;
+						// console.log(this.currentPage);
+						// console.log(this.currIndex);
+						this.requestA(this.currIndex,this.pageSize);
+						// console.log(this.items)
+					}
+				},
+				previousPage(){
+					if(this.currentPage>1){
+						this.currentPage--;
+						this.currIndex = (this.currentPage-1)*this.pageSize;
+						this.requestA(this.currIndex,this.pageSize);
+					}
+
+				},
+				requestA(currIndex,pageSize){
+					axios.post('/productList', {			//AJAX
+						currIndex:currIndex,
+						pageSize:pageSize,
+					}).then((response) => {
+						this.items = response.data.productList;
+						// console.log(this.items)
+
+					}).catch(function (error) {
+						console.log(error);
+					});
+				},
+
+			}
+		})
+	</script>
+</html>

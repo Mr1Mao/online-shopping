@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+	<head>
+		<meta charset="utf-8">
+		<title>登录</title>
+		<script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<link rel="stylesheet"href="css/animate.css">
+		<link rel="stylesheet"href="css/public.css">
+		<link rel="stylesheet"href="css/login.css">
+			<style>
+				.login-enter{
+					opacity: 0;
+					transform: translateX(-400px);
+				}
+				.login-leave-to{
+					transform:translateX(400px);		
+				}
+				.login-enter-active,.login-leave-active{
+					transition: all 0.4s ;
+				}
+				html{
+					width: 100%;
+					height: 100%;
+				}
+				body{
+					overflow: hidden;
+					width: 100%;
+					height: 100%;
+
+				}
+				video{
+					width: 100%;
+					height: 100%;
+					object-fit: fill;
+				}
+				.user_forms{
+					background-color: white;
+					border: none;
+				}
+			</style>
+	</head>
+	<body>
+		<video styel=""autoplay loop muted  x5-playsinline="true" playsinline="true" webkit-playsinline="true" preload="auto">
+			<source src="img/tvc-v2_30097df.mp4"  type="video/mp4">
+			<!-- <source src="movie.ogg"  type="video/ogg"> -->
+			您的浏览器不支持 HTML5 video 标签。
+		</video>
+		<div class="user_forms">
+			<transition name="login" >
+			<div class="login_box" v-if="show == 'login'" key="login">
+					<div class="loginTop">
+						<!-- <div class="loginLogo"><img src="img/1.jpg"></div> -->
+						<div class="loginTitle">Login</div>
+					</div>
+<!--					<form action="login.html" method="post">-->
+						<div class="loginInput">
+							<p><input type="text" placeholder="用户名" v-model="user"></p>
+							<p v-if="userShow" style="color: red;" >请填写用户名</p>
+							<p><input type="password" placeholder="密码" v-model="password"></p>
+							<p v-if="pwdShow" style="color: red;" v-text="passmsg">请输入密码</p>
+						</div>
+						<p class="loginbtn" @click="login"><input type="button" value="登录"></p>
+						<p class="registerbtn" @click="change('register')" >注册</p>
+<!--					</form>-->
+			</div>
+			
+ 			<div class="Code_box" v-if="show == 'regsuccess'" key="msg">
+				<div class="top">
+<!--					<div class="Code-text"><input type="text" placeholder="验证码"></div>-->
+<!--					<div class="Code-img"><img src="img/timg.jpg"></div>-->
+					<p style="text-align: center"><img src="img/LOGO.png" style="height: 150px;width: 150px;"></p>
+                    <p style="font-size: 2rem; text-align: center" v-text="regmsg"></p>
+				</div>
+				<div class="bottom">
+					<button class="left" @click="change('login')" > 去登陆</button>
+					<button class="right" @click="change('register')" >取消</button>
+				</div>
+			</div>
+			
+			<div class="register_box" v-if="show == 'register'" key="register">
+				<div class="register">
+					Register
+				</div>
+					<p class="type_text" ><input  type="text" placeholder="用户名" v-model="regUser"></p>
+					<p style="text-align: left; color: red;" v-show="regtShow == 1">请输入用户名</p>
+					<p class="type_text" ><input  type="password" placeholder="密码" v-model="regPwd"></p>
+					<p style="text-align: left; color: red;" v-show="regtShow == 2">请输入密码</p>
+					<p style="text-align: left; color: red;" v-show="regtShow == 6">两次密码不一致</p>
+					<p class="type_text" ><input  type="password" placeholder="确认密码" v-model="ConfirmPwd"></p>
+					<p style="text-align: left; color: red;" v-show="regtShow == 3">请再次输入密码</p>
+					<p class="type_text" ><input  type="text" placeholder="邮箱" v-model="mail"></p>
+					<p style="text-align: left; color: red;" v-show="regtShow == 4">请输入邮箱</p>
+					<p class="type_text phone-text" ><input  type="text" placeholder="绑定手机" v-model="phone"></p>
+					<p style="text-align: left; color: red;" v-show="regtShow == 5">请输入绑定的手机号</p>
+					<p class="registerbtn2"><input type="button" value="注册"  @click="register()"  ></p>
+					<p class="registerbtn" @click="change('login')" >返回</p>
+			</div>
+			</transition>
+			
+		</div>
+	</body>
+	<script src="js/header.js"></script>
+	<script>	
+	
+		var a = new Vue({
+			el:".user_forms",
+			data:{
+				show:'login',
+				user:'',
+				password:'',
+				userShow:false,
+				pwdShow:false,
+				regUser:'',
+				regPwd:'',
+				ConfirmPwd:'',
+				mail:'',
+				phone:'',
+				regtShow:0,
+                passmsg:'',
+				regmsg:'',
+			},
+			methods:{
+				change(val){
+					console.log(val)
+					if(val == 'register'){
+						this.regUser = '',
+						this.regPwd = '',
+						this.mail = '',
+						this.phone = '',
+						this.ConfirmPwd = ''
+					}
+					this.show = val
+				},
+				login(){
+					if(this.user == ''){
+						this.userShow=true;
+					}
+					if(this.password == ''){
+                        this.passmsg="请输入密码"
+						this.pwdShow=true;
+					}
+					if(this.user != '' && this.password != ''){
+						axios.post('/login.html', {			//AJAX登录
+							username: this.user,
+							password: this.password,
+
+						}).then((response)=>{
+							if ( 1 == response.data) {
+								setTimeout(function(){
+									window.location.href="index.html";
+								},500);
+							}else{
+                                this.passmsg = "密码错误";
+                                this.pwdShow = true;
+								console.log(passmsg);
+								console.log(response.data);
+							}
+						}).catch(function (error) {
+							console.log(error);
+						});
+					}
+				},
+				register(){
+					if(this.regUser == ''){
+						this.regtShow=1;
+					}else if(this.regPwd == ''){
+						this.regtShow=2;
+					}else if(this.ConfirmPwd == ''){
+						this.regtShow=3;
+					}else if(this.mail == ''){
+						this.regtShow=4;
+					}else if(this.phone == ''){
+						this.regtShow=5;
+					}else if(this.ConfirmPwd != this.regPwd){
+						this.regtShow=6;
+					}else{
+                        axios.post('/register.html', {			//AJAX登录
+							username: this.regUser,
+							password: this.regPwd,
+							email:this.mail,
+							phone:this.phone,
+                        }).then((response)=>{
+                            if ( 1 == response.data) {
+								this.regmsg = "注册成功";
+								this.show = 'regsuccess';
+                            }else{
+								this.regmsg = "注册失败";
+                                // console.log(response.data);
+								// console.log('注册失败');
+                            }
+                        }).catch(function (error) {
+                            console.log(error);
+                        });
+
+                    }
+				}
+				
+			},
+		})
+		
+	</script>
+</html>

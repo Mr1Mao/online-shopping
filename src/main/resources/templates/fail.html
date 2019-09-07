@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>网上商城</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+		<link rel="stylesheet"href="css/public.css">
+		<link rel="stylesheet"href="css/header.css">
+		<link rel="stylesheet"href="css/fail.css">
+		<link rel="stylesheet"href="css/footer.css">
+		<link rel="stylesheet"href="css/Response.css">
+	</head>
+	<body>
+	<header>
+		<div id="head-box">
+			<div id="logo"><a href="index.html"><img src="img/LOGO.png"></a></div>
+			<nav class="menu" role="navigation">
+				<ul>
+					<li><a href="index.html">首页</a></li>
+					<li style="color: gold;" >商品
+						<ul class="Subdirectories">
+							<li style="color: gold;"><a href="shop.html">热门商品</a></li>
+							<li><a href="shop.html">最新上市</a></li>
+						</ul>
+					</li>
+					<li>关于</li>
+					<li>客服</li>
+				</ul>
+			</nav>
+			<form action="" class="Search-form">
+				<input type="text" class="Search  form-control"  placeholder="Search">
+				<button type="submit" class="btn-Search"><img src="img/Search.png"></button>
+			</form>
+			<div class="user" v-if="!isLogin">
+				<div class="login"><a href="helloLogin">登录</a></div>
+				<div class="register"><a href="helloLogin">注册</a></div>
+			</div>
+			<div class="Landed"  v-if="isLogin">
+				<div class="cart_btn"><a href="cart"><img src="img/cart.png"></a></div>
+				<div class="head_portrait" >
+					<img src="img/user.png" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+					<div class="user_center" v-if="userCenterShow" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+						<ul>
+							<li v-text="userinfo.username"></li>
+							<li><a href="confirm_order.html?all=1" style="color: white">我的订单</a></li>
+							<li><a href="/cancellation" style="color: white">退出登录</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+		<content>
+			<div class="main">
+				<!-- <div class="succ_box"> -->
+					<div class="suc_img"><img src="img/fail.png">支付失败</div>
+					<p class="succ_title">您的余额不足，请查看您的余额</p>
+					<p class="details"><a href="#">查看详情</a></p>
+					<p class="Return"><button @click="Return()">返回</button></p>
+				<!-- </div> -->
+			</div>
+		</content>
+		<footer>
+			<div class="foot-box">
+				<div class="foot-left">
+					<div class="foot-logo"><img src="img/LOGO.png" ></div>
+					<ul>
+						<li>首页</li>
+						<li>商品中心</li>
+						<li>关于企业</li>
+						<li>客服服务</li>
+					</ul>
+				</div>
+				<div class="foot-center">
+					<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">联系我们</h2>
+					<ul>
+						<li>Tel：123-456-7890</li>
+						<li>Email：mao1195419991@163.com</li>
+						<li>地址：杭州市江干区</li>
+					</ul>
+				</div>
+				<div class="foot-right">
+					<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">加入我们</h2>
+					<h4>填写信息</h4>
+					<div class="contact-bt"><p class="text-center">联系我们！</p></div>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+			<div class="bottom">
+				<p class="text-center">法律声明&nbsp;|&nbsp;隐私政策&nbsp;|&nbsp;购物付款&nbsp;|&nbsp;类型服务&nbsp;|&nbsp;付款类型&nbsp;|&nbsp;支付方式&nbsp;|&nbsp;产品售后与申诉服务&nbsp;|&nbsp;投诉与申诉&nbsp;|&nbsp;举报知识产权维护&nbsp;</p>
+			</div>
+		</footer>
+	</body>
+	<script src="js/header.js"></script>
+</html>
+<script>
+	new Vue({
+		el:".main",
+		data:{
+			orderInfo:[]
+		},
+		methods:{
+			Return(){
+				window.location.href="index.html";
+			}
+		}
+	})
+</script>

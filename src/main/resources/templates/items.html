@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<link rel="stylesheet"href="css/public.css">
+		<link rel="stylesheet"href="css/header.css">
+		<link rel="stylesheet"href="css/buy.css">
+		<link rel="stylesheet"href="css/footer.css">
+		<link rel="stylesheet"href="css/Response.css">
+	</head>
+	<body>
+	<header>
+		<div id="head-box">
+			<div id="logo"><a href="index.html"><img src="img/LOGO.png"></a></div>
+			<nav class="menu" role="navigation">
+				<ul>
+					<li><a href="index.html">首页</a></li>
+					<li style="color: gold;">商品
+						<ul class="Subdirectories">
+							<li><a href="shop.html">热门商品</a></li>
+							<li><a href="shop.html">最新上市</a></li>
+						</ul>
+					</li>
+					<li>关于</li>
+					<li>客服</li>
+				</ul>
+			</nav>
+			<form action="" class="Search-form">
+				<input type="text" class="Search  form-control"  placeholder="Search">
+				<button type="submit" class="btn-Search"><img src="img/Search.png"></button>
+			</form>
+			<div class="user" v-if="!isLogin">
+				<div class="login"><a href="helloLogin">登录</a></div>
+				<div class="register"><a href="helloLogin">注册</a></div>
+			</div>
+			<div class="Landed"  v-if="isLogin">
+				<div class="cart_btn"><a href="cart"><img src="img/cart.png"></a></div>
+				<div class="head_portrait" >
+					<img src="img/user.png" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+					<div class="user_center" v-if="userCenterShow" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+						<ul>
+							<li v-text="userinfo.username"></li>
+							<li><a href="confirm_order.html?all=1" style="color: white">我的订单</a></li>
+							<li><a href="/cancellation" style="color: white">退出登录</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+	<content>
+		<div class="main">
+			<div class="shop-buy">
+				<div class="top">
+					<div class="goods-img">
+						<img :src="arr.img[active]" alt="">
+						<div class="thumbnail-box">
+							<img v-for="(item,index) in arr.img" @mouseenter="enter(index)" :src="item" :class='{selected:index==active}' alt="" >
+						</div>
+					</div>
+					<div class="orderType">
+						<h4 v-text="this.arr.name"></h4>
+							<div class="price">价&nbsp;&nbsp;&nbsp;&nbsp;格：<span style="font-size: 2rem; color: #CD0B2D;" v-cloak> &#165; {{this.arr.price.toFixed(2)}} /{{this.arr.unit}} </span></div>
+							<div class="transports">运&nbsp;&nbsp;&nbsp;&nbsp;输：<span style="color: #333333;" v-text="this.arr.modeShop">普通物流</span></div>
+							<div class="numbers">数&nbsp;&nbsp;&nbsp;&nbsp;量：
+								<input type="text" v-model.number = "num" @input="change(num)" maxlength="2" />
+								<div class="add-reduce">
+									<button @click="add" type="button" class="add"></button>
+									<button @click="reduce" type="button" class="reduce"></button>
+								</div>
+								<span style="color: #333333;" v-cloak>{{this.arr.unit}} 剩余库存： {{this.arr.stock}} {{this.arr.unit}} </span>
+							</div>
+							<p style="color: red;margin-left: 20px;font-size: 1.2rem" v-text="msgNum"></p>
+							<div class="buy-type">
+								<button type="button" class="btn btn-danger" id="add-to-cars" @click="addCart()">
+									<span style="font-size: 1.8rem;">
+										<a style="color: white;">加入购物车</a>
+									</span>
+								</button>
+								<button type="button" class="btn btn-warning " id="buying">
+									<span style="font-size: 1.8rem;">
+										<a href="confirm_order.html" style="color: white;">&nbsp;&nbsp;立即购买&nbsp;&nbsp;</a>
+									</span>
+								</button>
+							</div>
+							<div class="msgBox" v-if="msgShow">
+								<p><img src="img/success.png">成功加入购物车</p>
+								<p class="bt">
+									<button class="btn btn-danger" @click="checkCart()">查看购物车</button>
+									<button class="btn btn-warning" @click="msgShow = false">&nbsp;&nbsp;&nbsp;&nbsp;取消&nbsp;&nbsp;&nbsp;&nbsp;</button>
+								</p>
+							</div>
+					</div>
+				</div>
+				<div class="goods-info">
+					<div class="info-box">
+						<div class="info-and-comment">
+							<div v-for="(item,index) in arr" @click="enter(index)" :class='[{selected2:index==active},{inACom:true}]'>
+								<p class="text-center">{{arr[index]}}</p>
+							</div>
+							<!-- <div style="clear: both;"></div> -->
+						</div>
+						<div class="info-content" v-if="show">
+							<ul>
+								<li><div>产品名称：</div><div v-text="arrImg.name"></div></li>
+								<li><div>品牌名称：</div><div v-text="arrImg.brand"></div></li>
+								<li><div>产品所在地：</div><div v-text="arrImg.location"></div></li>
+								<li><div>产品编码：</div><div v-text="arrImg.proNum"></div></li>
+								<li><div>单位：</div><div v-text="arrImg.unit"></div></li>
+								<li><div>SKU：</div><div v-text="arrImg.SKU"></div></li>
+
+								<li><div>型号：</div><div v-text="arrImg.name"></div></li>
+								<li><div>颜色分类：</div><div v-text="arrImg.color"></div></li>
+								<li><div>适用性别：</div><div>中性</div></li>
+								<li><div>轮子个数：</div><div>4</div></li>
+								<li><div>滑板类型：</div><div v-text="arrImg.pro_type" ></div></li>
+							</ul>
+						</div>
+						<div class="items-img" v-if="show">
+							<img v-for="item in arrImg.img" :src="item" alt="">
+							<!-- <img src="img/O1CN01Y57PgB2I0donX9PhD_!!3339689224.jpg" alt=""> -->
+						</div>
+					</div>
+					<div class="comment">
+						<div class="comment-top">
+							<ul>
+								<li><span>全部评价</span><span>(0)</span></li>
+								<li><span>晒图</span><span>(0)</span></li>
+								<li><span>好评</span><span>(0)</span></li>
+								<li><span>中评</span><span>(0)</span></li>
+								<li><span>差评</span><span>(0)</span></li>
+								<div style="clear:both;"></div>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</content>
+	<footer>
+		<div class="foot-box">
+			<div class="foot-left">
+				<div class="foot-logo"><img src="img/LOGO.png" ></div>
+				<ul>
+					<li><a href="index.html">首页</a></li>
+					<li>商品中心</li>
+					<li>关于企业</li>
+					<li>客服服务</li>
+				</ul>
+			</div>
+			<div class="foot-center">
+				<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">联系我们</h2>
+				<ul>
+					<li>Tel：123-456-7890</li>
+					<li>Email：mao1195419991@163.com</li>
+					<li>地址：杭州市江干区</li>
+				</ul>
+			</div>
+			<div class="foot-right">
+				<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">加入我们</h2>
+				<h4>填写信息</h4>
+				<div class="contact-bt"><p class="text-center">联系我们！</p></div>
+			</div>
+			<div style="clear: both;"></div>
+		</div>
+		<div class="bottom">
+			<p class="text-center">法律声明&nbsp;|&nbsp;隐私政策&nbsp;|&nbsp;购物付款&nbsp;|&nbsp;类型服务&nbsp;|&nbsp;付款类型&nbsp;|&nbsp;支付方式&nbsp;|&nbsp;产品售后与申诉服务&nbsp;|&nbsp;投诉与申诉&nbsp;|&nbsp;举报知识产权维护&nbsp;</p>
+		</div>
+	</footer>
+	</body>
+	<script src="js/header.js"></script>
+	<script>
+		//商品图片切换
+		new Vue({
+			el:'.top',
+			data:{
+				num: 0,
+				active:0,
+				arr:[],
+				afterUrl:'',
+				msgShow:false,
+				msgNum:'',
+			},
+			created: function () {
+				this.afterUrl =  this.getQueryVariable("id");
+				axios.get('/productInfo', {			//AJAX
+					params: {
+						id : this.afterUrl,
+					},
+			}).then((response) => {
+					this.arr = response.data;
+					// console.log(response)
+				}).catch(function (error) {
+					console.log(error);
+				});
+			},
+			methods:{
+				enter(index){
+					this.active=index;						//购买数量输入事件
+					// console.log("index======",index)
+				},
+				add:function (event){						//购买数量增加按钮
+					if(this.num < 99){
+						this.num += 1 ;
+						// console.log(this.num);
+					}
+				},
+				reduce:function (event){				//购买数量减少按钮
+					if(this.num > 0){
+						this.num -= 1 ;
+						// console.log(this.num);
+					}
+				},
+				change:function(val){					//过滤除了数字外其他字符
+					val = val.replace(/[^0-9]+/g,'')
+					// console.log(val);
+					if(!val) {
+						this.num = "";
+						return
+					}
+				},
+				addCart(){								//添加购物车事件
+					if(this.num == 0){
+						this.msgNum="请选择购买数量";
+					}else {
+						axios.get('/addCart', {//AJAX
+							headers: {
+								"X-Requested-With": "XMLHttpRequest",
+							},
+							params: {
+								id: this.afterUrl,
+								num: this.num
+							},
+						}).then((response) => {
+							console.log(response);
+							if (response.data == "0") {
+								window.location.href = "/helloLogin";
+							} else if (response.data == "1") {
+								this.msgShow = true;
+							}
+							console.log(this.msgShow);
+						}).catch(function (error) {
+							console.log(error);
+						});
+					}
+
+				},
+				getQueryVariable(variable) { 				//获取URL的参数方法
+					var query = window.location.search.substring(1);
+					var vars = query.split("&");
+					for (var i=0;i<vars.length;i++) {
+						var pair = vars[i].split("=");
+						if(pair[0] == variable){return pair[1];}
+					}
+					return(false);
+				},
+				checkCart(){ 								//查看购物车事件
+					window.location.href="/cart"
+				}
+			}
+		})
+		//商品信息与评论切换
+		new Vue({
+			el:'.info-box',
+			data:{
+				active:0,
+				show:true,
+				arr:[
+					"产品信息",
+					"累计评价",
+				],
+				arrImg:[],
+				afterUrl:""
+			},
+			created: function () {
+				this.afterUrl =  this.getQueryVariable("id");
+				// console.log(this.afterUrl)
+				axios.get('/details', {			//AJAX
+					params: {
+						id : this.afterUrl,
+					},
+				}).then((response) => {
+					this.arrImg = response.data;
+					// console.log(response)
+				}).catch(function (error) {
+					console.log(error);
+				});
+			},
+			methods:{
+				enter(index){
+					this.active=index;
+					if(index==1){
+						this.show = false;
+					}else{
+						this.show=true;
+					}
+				},
+				getQueryVariable(variable) {
+					var query = window.location.search.substring(1);
+					var vars = query.split("&");
+					for (var i=0;i<vars.length;i++) {
+						var pair = vars[i].split("=");
+						if(pair[0] == variable){return pair[1];}
+					}
+					return(false);
+				}
+			}
+		})
+
+		//评论切换
+		// 		new Vue({
+		// 			el:'.comment',
+		// 			data:{
+		// 				active:0,
+		// 				   arr:[
+		//
+		// 				],
+		// 			},
+		// 			methods:{
+		// 				enter(index){
+		// 					this.active=index;
+		// 					console.log("index======",index)
+		// 				}
+		// 			}
+		// 		})
+	</script>
+</html>

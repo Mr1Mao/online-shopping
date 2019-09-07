@@ -1,0 +1,166 @@
+.background-image{
+	width:100%;
+	height: auto;
+	position: fixed;
+	margin-top: -20px;
+	z-index: -99;
+}
+.background-image img{
+	width: 100%;
+	height: 100%;
+}
+.left-title{
+	width: 550px;
+	/* background-color: red; */
+}
+.mask1{
+    height: 0;
+    width: 600px;
+    border-bottom: 640px solid rgb(244, 182, 19);
+    border-right: 300px solid transparent;
+	padding-top: 110px;
+}
+.part-2{
+	width: 100%;
+	/* height: 1000px; */
+	background: rgba(0, 0, 0, 0.8);
+	padding-bottom: 490px;
+}
+.welcome-header-text {
+	width: 640px;
+	color: white;
+	font-size: 7rem;
+	margin-top: 280px;
+	/* background-color: red; */
+	/* float: right; */
+	position: absolute;
+}
+.welcome-header-text p{
+	/* width: 100%; */
+	text-align: right;
+}
+.welcome-header-text a:hover{text-decoration:none; color: #333333;}
+.welcome-header-text a{ text-decoration:none; color:white;}
+.part-3{
+	width: 100%;
+	/* height: 800px; */
+	background-color: rgb(244, 182, 19);
+	padding-top:350px;
+	padding-bottom: 100px;
+}
+.videolan{
+	width: 630px;
+	height: 350px;
+	float: left;
+	margin-left: 180px;
+	margin-top: 155px;
+}
+.right-2{
+	width: 400px;
+	height: 350px;
+	/* background-color: red; */
+	color: white;
+	/* font-size:1.7rem; */
+	float: left;
+	margin-top: 140px;
+	margin-left: 80px;
+}
+.more{
+	width: 90px;
+	height: 40px;
+	border:2px solid #FFFFFF;
+	margin-top: 80px;
+	font-size: 1.5rem;
+	line-height: 35px;
+	cursor: pointer;
+}
+.more:hover{
+	border:2px solid rgb(244, 182, 19);
+	color: rgb(244, 182, 19);;
+}
+.sport-right{
+	float: right;
+	width: 400px;
+	height: 570px;
+	border:13px solid #FFFFFF;
+	margin-top: 193px;
+	margin-right: 300px;
+}
+.sport-right img{
+	width: auto;
+	height: 550px;
+	/* background-color: #CD0B2D; */
+}
+.sport-right::after{
+    content: "";
+	display:block;
+	width: 400px;
+	height: 265px;
+	border:5px solid rgb(244, 182, 19);
+	border-bottom:none;
+	position: relative;
+	left: 30px;
+	top: -530px;
+	/* background-color: red; */
+}
+
+.sport-right::before{
+    content: "";
+	display:block;
+	width: 400px;
+	height: 310px;
+	border:5px solid white;
+	position: absolute;
+	/* background-color: red; */
+	border-top: none;
+	margin-left: 30px;
+	margin-top: 285px;
+}
+.sport-left{
+	color: white;
+	float: right;
+	margin-top: 370px;
+	margin-right: 100px;
+}
+.shop{
+	width: 245px;
+	height: 80%;
+	/* background-color:white; */
+	float: left;
+	margin: 0 35px;
+	cursor: pointer;
+	
+}
+.shop-show{
+	width: 85%;
+	/* height: 500px; */
+	/* background-color: #CD0B2D; */
+	margin: 0 auto;
+	/* padding-top: 100px; */
+}
+.shop-title{
+	/* width: 400px; */
+	margin: 50px auto;
+}
+.shop-show img{
+	background-color: beige;
+	width: 100%;
+	height: 386px;
+}
+.shop-info{
+	margin-top: 30px;
+}
+.shop-show-bt{
+	width: 300px;
+	height: 50px;
+	border:3px solid white;
+	line-height: 40px;
+	font-size: 1.5rem;
+	margin: 50px auto;
+	color: white;
+	cursor: pointer;
+}
+.shop-show-bt:hover{
+	border:3px solid rgba(0, 0, 0, 0.1);
+	background-color:rgba(0, 0, 0, 0.8) ;
+}

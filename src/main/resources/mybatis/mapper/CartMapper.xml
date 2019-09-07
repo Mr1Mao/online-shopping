@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.CartMapper">
+
+    <resultMap id="cartInfoMap" type="com.entity.Cart" >
+        <id column="cart_id" property="cart_id"  />
+        <id column="num" property="num"  />
+        <id column="isCheck" property="isCheck"  />
+        <id column="pro_id" property="pro_id"  />
+        <id column="id" property="id"  />
+        <association property="product" javaType="com.entity.Product" >
+            <id column="pro_name" property="name"  />
+            <id column="pro_type" property="type"  />
+            <id column="color" property="color"  />
+            <id column="title-img" property="titleImg"  />
+            <id column="stock" property="stock"  />
+            <id column="other" property="other"  />
+            <id column="brand" property="brand"  />
+            <id column="pro_price" property="price"  />
+            <id column="discount" property="discount"  />
+        </association>
+    </resultMap>
+<!--获取购物车信息-->
+    <select id="getCartInfo" resultMap="cartInfoMap">
+        SELECT
+            cart.cart_id,
+            cart.num,
+            cart.isCheck,
+            cart.pro_id,
+            cart.id,
+            product.pro_name,
+            product.pro_type,
+            product.color,
+            product.`title-img`,
+            product.stock,
+            product.other,
+            product.brand,
+            product.pro_price,
+            product.discount
+        FROM
+            cart
+        INNER JOIN `user` ON (cart.id = USER .u_id)
+        INNER JOIN product ON (cart.pro_id = product.pro_id)
+        WHERE
+            cart.id = #{u_id}
+    </select>
+<!--删除购物车物品-->
+    <delete id="deleteItem">
+        DELETE FROM cart where cart_id = #{cart_id}
+    </delete>
+
+<!--    批量删除购物车物品-->
+    <delete id="batchDelete">
+        DELETE FROM cart WHERE cart_id IN
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+<!--        添加订单信息-->
+    <insert id="addOrder">
+        INSERT INTO orders(order_id,num,leaving_message,id,pro_id,add_id,status)
+        <foreach collection="orders" item="item" open="VALUES" close=";" separator=",">
+          (#{item.order_id},#{item.num},#{item.leaving_message},#{item.id},#{item.pro_id},#{item.add_id},#{item.status})
+        </foreach>
+    </insert>
+
+    <resultMap id="orderInfo" type="com.entity.Orders" >
+        <id column="order_id" property="order_id"  />
+        <id column="num" property="num"  />
+        <id column="leaving_message" property="leaving_message"  />
+        <id column="id" property="id"  />
+        <id column="pro_id" property="pro_id"  />
+        <id column="add_id" property="add_id"  />
+        <id column="status" property="status"  />
+        <association property="product" javaType="com.entity.Product" >
+            <id column="pro_name" property="name"  />
+            <id column="pro_price" property="price"  />
+            <id column="stock" property="stock"  />
+            <id column="brand" property="brand"  />
+            <id column="pro_location" property="location"  />
+            <id column="color" property="color"  />
+            <id column="pro_type" property="type"  />
+            <id column="title-img" property="titleImg"  />
+            <id column="other" property="other"  />
+            <id column="pro_num" property="proNum"  />
+            <id column="freight" property="freight"  />
+            <id column="freight_insurance" property="freight_insurance"  />
+            <id column="freight_type" property="freight_type"  />
+        </association>
+    </resultMap>
+
+<!--        获取订单信息-->
+    <select id="getOrdersInfo" resultMap="orderInfo">
+        select * from orders INNER JOIN product ON (orders.pro_id = product.pro_id) where id=#{id} and status = #{status} AND orders.pro_id = product.pro_id
+    </select>
+
+    <update id="updateOrder">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update orders
+            <set>
+                status=#{item.status},leaving_message=#{item.leaving_message},add_id=#{item.address}
+            </set>
+            <where>
+                order_id = #{item.order_id}
+            </where>
+        </foreach>
+    </update>
+
+    <insert id="insertOrder">
+        INSERT INTO orders(order_id,num,leaving_message,id,pro_id,add_id,status)VALUES (#{item.order_id},#{item.num},#{item.leaving_message},#{item.id},#{item.pro_id},#{item.add_id},#{item.status})
+    </insert>
+</mapper>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+	<head>
+		<meta charset="utf-8">
+		<title>购物车</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<link rel="stylesheet"href="css/public.css">
+		<link rel="stylesheet"href="css/header.css">
+		<link rel="stylesheet"href="css/cart.css">
+		<link rel="stylesheet"href="css/footer.css">
+		<link rel="stylesheet"href="css/Response.css">
+		<style>
+					.v-enter,.v-leave-to{
+						opacity: 0;
+						transform: translateX(50px);
+					}
+					.v-enter-active,.v-leave-active{
+						transition: all 0.4s ease;
+					}
+					.v-move{
+						transition: all 0.4s ease;
+					}
+					.v-leave-active{
+						position: absolute;
+					}
+		</style>
+	</head>
+	<body>
+	<header>
+		<div id="head-box">
+			<div id="logo"><a href="index.html"><img src="img/LOGO.png"></a></div>
+			<nav class="menu" role="navigation">
+				<ul>
+					<li><a href="index.html">首页</a></li>
+					<li style="color: gold;" >商品
+						<ul class="Subdirectories">
+							<li><a href="shop.html">热门商品</a></li>
+							<li><a href="shop.html">最新上市</a></li>
+						</ul>
+					</li>
+					<li>关于</li>
+					<li>客服</li>
+				</ul>
+			</nav>
+			<form action="" class="Search-form">
+				<input type="text" class="Search  form-control"  placeholder="Search">
+				<button type="submit" class="btn-Search"><img src="img/Search.png"></button>
+			</form>
+			<div class="user" v-if="!isLogin">
+				<div class="login"><a href="helloLogin">登录</a></div>
+				<div class="register"><a href="helloLogin">注册</a></div>
+			</div>
+			<div class="Landed"  v-if="isLogin">
+				<div class="cart_btn"><a href="cart"><img src="img/cart.png"></a></div>
+				<div class="head_portrait" >
+					<img src="img/user.png" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+					<div class="user_center" v-if="userCenterShow" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+						<!-- @mouseenter="onMousein()" @mouseleave="onMouseout()" -->
+						<ul>
+							<li v-text="userinfo.username"></li>
+							<li><a href="confirm_order.html?all=1" style="color: white">我的订单</a></li>
+							<li><a href="/cancellation" style="color: white">退出登录</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+		<content>
+			<div class="main">
+				<div class="top-title"><img src="img/cart.png" alt="">购物车</div>
+				<div class="items_title">
+					<ul>
+						<li class="selected" >全部商品<span v-text="items.length"></span></li>
+						<li>库存紧张<span>0</span></li>
+					</ul>
+				</div>
+					<div class="items_info">
+						<ul>
+							<li class="c_all"><input type="checkbox" @click="CheckAll(chackA)" v-model="chackA">全选</li>
+							<li class="info_title">商品信息</li>
+							<li class="unit_price_title">单价</li>
+							<li class="nums_title">数量</li>
+							<li class="subtotal_title">金额</li>
+							<li class="operation_title">操作</li>
+						</ul>
+					</div>
+				<div v-if="items.length == 0" style="font-size:2.5rem;height:150px;width: 100%;text-align: center;line-height: 150px">您的购物车还是空的</div>
+				<transition-group>
+					<div class="items" v-for="(item,index) in items" :key="index+1">
+						<div class="check items_public_style">
+							<input type="checkbox" @click="CheckItem(item)" v-model="item.selected"/>
+						</div>
+						<div class="items-info items_public_style">
+							<img :src="item.img" alt="">
+							<p v-cloak>{{item.product_name}}</p>
+							<div style="clear: both;"></div>
+						</div>
+						<div class="items_unit_price items_public_style">
+							<span v-cloak>￥{{item.unit_price.toFixed(2)}}</span>
+						</div>
+						<div class="items_nums items_public_style">
+							<div class="reduce" @click="reduce(item)">-</div>
+							<input type="text" maxlength="2" v-model="item.nums" @input="change(item.nums,item)"/>
+							<div class="add" @click="add(item)">+</div>
+						</div>
+						<div class="items_subtotal items_public_style">
+							<span v-cloak>￥{{(item.unit_price * item.nums).toFixed(2)}}</span>
+						</div>
+						<div class="items_operation items_public_style">
+							<p style="cursor: pointer"><a @click="Remove(index,item.operations.remove)">删除</a></p>
+						</div>
+					</div>
+				</transition-group>
+				<div class="close_account">
+					<div class="check2 close_account_public_style">
+						<input type="checkbox" @click="CheckAll(chackA)" v-model="chackA"><span>全选</span>
+					</div>
+					<div class="close_del close_account_public_style">
+						<a href="#" @click ="checkRemove()">删除</a>
+					</div>
+					<div :class="[{close_btn:true},{close_account_public_style:true},{usable:usable}]" @click="Settlement()">结算</div>
+					<div class="settle_accounts close_account_public_style">合计（不含运费）： <span v-cloak>{{totalPrices>0 ? '￥' + totalPrices.toFixed(2) : totalPrices.toFixed(2)}}</span></div>
+					<div class="close_nums close_account_public_style">已选商品 <span v-cloak>{{isCheckAll}}</span> 件</div>
+				</div>
+			</div>
+		</content>
+		<footer>
+			<div class="foot-box">
+				<div class="foot-left">
+					<div class="foot-logo"><img src="img/LOGO.png" ></div>
+					<ul>
+						<li><a href="index.html">首页</a></li>
+						<li>商品中心</li>
+						<li>关于企业</li>
+						<li>客服服务</li>
+					</ul>
+				</div>
+				<div class="foot-center">
+					<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">联系我们</h2>
+					<ul>
+						<li>Tel：123-456-7890</li>
+						<li>Email：mao1195419991@163.com</li>
+						<li>地址：杭州市江干区</li>
+					</ul>
+				</div>
+				<div class="foot-right">
+					<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">加入我们</h2>
+					<h4>填写信息</h4>
+					<div class="contact-bt"><p class="text-center">联系我们！</p></div>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+			<div class="bottom">
+				<p class="text-center">法律声明&nbsp;|&nbsp;隐私政策&nbsp;|&nbsp;购物付款&nbsp;|&nbsp;类型服务&nbsp;|&nbsp;付款类型&nbsp;|&nbsp;支付方式&nbsp;|&nbsp;产品售后与申诉服务&nbsp;|&nbsp;投诉与申诉&nbsp;|&nbsp;举报知识产权维护&nbsp;</p>
+			</div>
+		</footer>
+	</body>
+	<script src="js/header.js"></script>
+	<script>
+
+		//数据渲染
+		var a = new Vue({
+			el:".main",
+			data:{
+				nums:0,
+				items:[],
+				chackA : false,
+				isCheckAll : 0,
+				totalPrices : 0,
+				usable:false,
+				cartId:[],
+			},
+			created: function () {				//接受后台json数据
+				// this.items = JSON.parse('[{"product_name":"四轮滑板初学者成人青少年儿童男女生双翘公路滑板车1","unit_price":199,"nums":2,"operations":{"remove":"#"},"selected":false,"img":"img/O1CN01BEBHNv2I0doj7N1LY_!!0-item_pic.jpg_430x430q90.jpg","isCheck":0},{"product_name":"四轮滑板初学者成人青少年儿童男女生双翘公路","unit_price":231,"nums":1,"operations":{"remove":"#"},"selected":false,"img":"img/O1CN01BEBHNv2I0doj7N1LY_!!0-item_pic.jpg_430x430q90.jpg","isCheck":0},{"product_name":"四轮滑板初学者成人青少年儿童男女生","unit_price":255,"nums":3,"operations":{"remove":"#"},"selected":false,"img":"img/O1CN01BEBHNv2I0doj7N1LY_!!0-item_pic.jpg_430x430q90.jpg","isCheck":0}]');
+				axios.get('/getCartInfo', {			//AJAX
+				}).then((response) => {
+					this.items = response.data;
+					// console.log(response)
+				}).catch(function (error) {
+					console.log(error);
+				});
+
+				var i = 0;
+				for( i = 0 ;i<this.items.length;i++){
+						if(this.items[i].selected){
+							this.isCheckAll++;
+						}
+				}
+			},
+			methods:{
+				add(item){						//减少增加事件
+					if(item.nums < 99){
+						item.nums++;
+					}
+				},
+				reduce(item){					//购买增加事件
+					if (item.nums > 0){
+						item.nums--;
+						// console.log(item);
+					}
+				},
+				change(val,item){				//过滤input只输出数字
+					val = val.replace(/[^0-9]+/g,'');
+					if(!val) {
+						item.nums = "";
+						return
+					}
+				},
+				CheckItem(item){					//单独选中按钮事件	
+					// console.log(item.state);
+					item.selected = !item.selected;
+					
+					if(item.selected){
+						item.isCheck = 1;
+					}else{
+						item.isCheck = 0;
+					}
+					
+					if(item.selected){
+						this.isCheckAll++;
+					}else{
+						this.isCheckAll--;
+					}
+					// console.log(this.items);
+				},
+				CheckAll(chackA){					//全选按钮事件
+					var i = 0;
+					for(i = 0 ;i<this.items.length;i++){
+							this.items[i].selected = !chackA;
+							if(!chackA){
+								this.items[i].isCheck = 1;
+							}else{
+								this.items[i].isCheck = 0;
+							}
+					}
+					if(!chackA){
+						this.isCheckAll = this.items.length;
+					}else{
+						this.isCheckAll = 0;
+					}
+				},
+				Remove(index,url){
+					// if(confirm("确定删除该项商品吗")){
+					axios.get(url, {			//AJAX
+					}).then((response) => {
+						this.items.splice(index,1);
+					}).catch(function (error) {
+						console.log(error);
+					});
+					// }
+					
+				},
+				checkRemove(){
+					if(this.isCheckAll>0){
+						if(confirm("确定删除这些商品吗")){
+							var j = 0;
+							for(var i = 0;i<this.items.length;i++){
+								if(this.items[i].selected == true){
+									this.cartId[j]=this.items[j].cart_id;
+									this.items.splice(i,1);
+									i--;
+								}
+								j++;
+							}
+							console.log(this.cartId,);
+							axios.post("/deleteItems", {							//AJAX
+								// params:{
+									cart_id:this.cartId,
+								// },
+							}).then((response) => {
+
+							}).catch(function (error) {
+								console.log(error);
+							});
+						}
+					}else{
+						alert("请选择要删除的商品");
+					}
+					
+				},
+				Settlement(){
+					if(this.isCheckAll>0){
+						var ordersList = [];
+						for(var i = 0;i<this.items.length;i++){
+							if(this.items[i].selected){
+								ordersList[i] = {
+									pro_id:this.items[i].pro_id,
+									num : this.items[i].nums,
+									cart_id: this.items[i].cart_id,
+								}
+							}
+
+						}
+						axios.post("/addOrder", {							//AJAX
+							ordersList:ordersList,
+						}).then((response) => {
+							window.location.href="confirm_order.html";
+						}).catch(function (error) {
+							console.log(error);
+						});
+					}
+
+				}
+				
+			},
+			watch:{							
+				"isCheckAll":function(){	//全选按钮事件监听 如果已选中全部单独按钮 ,就将全选按钮选中，反之亦然
+						if(this.isCheckAll == this.items.length){
+							this.chackA = true;
+						}else{
+							this.chackA = false;
+						}
+						if(this.isCheckAll > 0){
+							this.usable=true;
+						}else{
+							this.usable=false;
+						}
+						
+				}, 
+				"items":{
+					handler(){
+						this.totalPrices = 0
+						this.items.forEach((item)=>{
+							this.totalPrices += item.unit_price * item.nums * item.isCheck
+						});
+					}, 
+					immediate: true,
+					deep:true,
+					
+				}
+			}
+		})
+	</script>
+</html>

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+	<head>
+		<meta charset="utf-8">
+		<title>确认订单</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="https://cdn.bootcss.com/vue/2.6.10/vue.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<link rel="stylesheet"href="css/public.css">
+		<link rel="stylesheet"href="css/header.css">
+		<link rel="stylesheet"href="css/confirm_order.css">
+		<link rel="stylesheet"href="css/footer.css">
+		<link rel="stylesheet"href="css/Response.css">
+	</head>
+	<body>
+	<header>
+		<div id="head-box">
+			<div id="logo"><a href="index.html"><img src="img/LOGO.png"></a></div>
+			<nav class="menu" role="navigation">
+				<ul>
+					<li><a href="index.html">首页</a></li>
+					<li style="color: gold;">商品
+						<ul class="Subdirectories">
+							<li><a href="shop.html">热门商品</a></li>
+							<li><a href="shop.html">最新上市</a></li>
+						</ul>
+					</li>
+					<li>关于</li>
+					<li>客服</li>
+				</ul>
+			</nav>
+			<form action="" class="Search-form">
+				<input type="text" class="Search  form-control"  placeholder="Search">
+				<button type="submit" class="btn-Search"><img src="img/Search.png"></button>
+			</form>
+			<div class="user" v-if="!isLogin">
+				<div class="login"><a href="helloLogin">登录</a></div>
+				<div class="register"><a href="helloLogin">注册</a></div>
+			</div>
+			<div class="Landed"  v-if="isLogin">
+				<div class="cart_btn"><a href="cart"><img src="img/cart.png"></a></div>
+				<div class="head_portrait" >
+					<img src="img/user.png" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+					<div class="user_center" v-if="userCenterShow" @mouseenter="userCenterShow=true" @mouseleave="userCenterShow=false">
+						<ul>
+							<li v-text="userinfo.username"></li>
+							<li><a href="confirm_order.html?all=1" style="color: white">我的订单</a></li>
+							<li><a href="/cancellation" style="color: white">退出登录</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+		<content>
+			<div class="mian">
+				<div class="Receiving-address-box">
+					<div class="address-title"><h4>选择收货地址</h4></div>
+					<div v-for="(item,index) in arr" @click="enter(index,item)" @mouseenter="mouseenterl(index)" @mouseleave ="mouseleave()":class='[{selected:index==active || index==mouseeAnter},{Receiving_address:true}]'>
+						<div class="Receiver" v-cloak>{{item.province}} {{item.city}} ({{item.name}} 收)</div>
+						<div class="Detailed-address" v-cloak>{{item.area}} {{item.stree}} {{item.detailed}} <p>{{item.tell}}</p></div>
+						<div class="revise">修改</div>
+						<div class="triangle" v-if="index==active">
+							<img src="img/gou.png" alt="">
+						</div>
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+				
+				<div class="orders_box">
+					<div class="orders_title"><h4>确定订单信息</h4></div>
+					<div class="orders">
+						<div class="commodity_name public_style_orders"><p class="text-center">商品名称</p></div>
+						<div class="commodity_property public_style_orders"><p class="text-center">商品属性</p></div>
+						<div class="unit_price public_style_orders"><p class="text-center">单价</p></div>
+						<div class="nums public_style_orders"><p class="text-center">数量</p></div>
+						<div class="discounts public_style_orders"><p class="text-center">优惠方式</p></div>
+						<div class="subtotal public_style_orders"><p class="text-center">小计</p></div>
+						<div style="clear: both;"></div>
+					</div>
+					<div v-if="goods.length == 0" style="font-size:2.5rem;height:150px;width: 100%;text-align: center;line-height: 150px"><img src="img/order.png" style=" margin-top:-10px; height:45px; width:45px; margin-right: 20px" >您暂时没有任何订单</div>
+					<div class="items" v-for="(item,index) in goods" > <!-- zheli -->
+						<div class="items_top">
+							<div class="img-name items_public_style">
+								<div class="items-img "><img :src="item.items_img"></div>
+								<div class="items-name " v-cloak>{{item.items_name}}</div>
+							</div>
+							<div class="items-property items_public_style"><p class="text-center" v-cloak>{{item.property}}</p></div>
+							<div class="items-unit_price items_public_style"><p class="text-center" v-cloak>{{item.unit_price.toFixed(2)}}</p></div>
+							<div class="items-nums items_public_style"><p class="text-center" v-cloak>{{item.nums}}</p></div>
+							<div class="items-discounts items_public_style"><p class="text-center" v-cloak>{{item.discounts}}</p></div>
+							<div class="items-subtotal items_public_style"><p class="text-center" v-cloak>{{(item.nums * item.unit_price).toFixed(2)}}</p></div>
+						</div>
+						<div style="clear: both;"></div>
+						<div class="items_bottom">
+							<div class="additional">
+								<div class="Buyers_note">
+									<span>给卖家留言：</span>
+									<textarea class=""></textarea>
+								</div>
+								<div class="additional_price">
+									<div class="freight">
+										<span>运送方式:</span>
+										<span v-cloak>{{item.additional_price.freight_type}}</span>
+										<span v-cloak>快递￥{{item.additional_price.freight_price.toFixed(2)}}</span>
+										<p v-cloak>{{item.additional_price.freight_price.toFixed(2)}}</p>
+									</div>
+									<div class="Transport_insurance">
+										<span>运险费:</span>
+										<input type="checkbox" @click="enter($event,item)"/>
+										<span style="background-color: #36ab67; color: white;">运险费</span>
+										<span v-cloak>￥{{item.additional_price.Transport_insurance}}购买</span>
+										<p v-cloak :class='[{nonPurchased:!item.additional_price.isSelect}]'>{{item.additional_price.Transport_insurance}}</p>
+										
+									</div>
+								</div>
+								<div class="items_total_price"><span>店铺合计(含运费)</span><p class="text-center" v-cloak>￥{{item.total_prices.toFixed(2)}}</p></div>
+							</div>
+						</div>
+					</div>
+					<div class="close_account">
+						<div class="box">
+							<p class="actual_pay">实际付款：<span v-cloak>￥{{actual_pay.toFixed(2)}}<span></p>
+							<p>
+								寄送至：
+								<span v-cloak>{{addres}}</span>
+<!-- 								<span>{{addr.$data.arr.add.city}}</span>
+								<span>{{addr.$data.arr.add.area}}</span>
+								<span>{{addr.$data.arr.add.stree}}</span>
+								<span>{{addr.$data.arr.add.detailed}}</span> -->
+							</p>
+							<p>收货人：
+							 <span v-cloak>{{name}}</span>
+							 <!-- <span>{{goods.add.tell}}</span> -->
+							</p>
+						</div>
+						<div class="close_account-bnt" @click="payment"><a style="color: white;">结算订单</a></div> 					<!-- 临时 -->
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+			</div>
+		</content>
+		<footer>
+			<div class="foot-box">
+				<div class="foot-left">
+					<div class="foot-logo"><img src="img/LOGO.png" ></div>
+					<ul>
+						<li><a href="index.html">首页</a></li>
+						<li>商品中心</li>
+						<li>关于企业</li>
+						<li>客服服务</li>
+					</ul>
+				</div>
+				<div class="foot-center">
+					<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">联系我们</h2>
+					<ul>
+						<li>Tel：123-456-7890</li>
+						<li>Email：mao1195419991@163.com</li>
+						<li>地址：杭州市江干区</li>
+					</ul>
+				</div>
+				<div class="foot-right">
+					<h2 style="margin-bottom: 50px; color: rgb(244, 182, 19);">加入我们</h2>
+					<h4>填写信息</h4>
+					<div class="contact-bt"><p class="text-center">联系我们！</p></div>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+			<div class="bottom">
+				<p class="text-center">法律声明&nbsp;|&nbsp;隐私政策&nbsp;|&nbsp;购物付款&nbsp;|&nbsp;类型服务&nbsp;|&nbsp;付款类型&nbsp;|&nbsp;支付方式&nbsp;|&nbsp;产品售后与申诉服务&nbsp;|&nbsp;投诉与申诉&nbsp;|&nbsp;举报知识产权维护&nbsp;</p>
+			</div>
+		</footer>
+	<script src="js/header.js"></script>
+	</body>
+	<script>
+		//收货地址
+		var addr = new Vue({
+			el:'.Receiving-address-box',
+			data:{
+				active:0,
+				mouseeAnter:0,
+				arr:[],
+				addressIndex:0,
+			},
+			created: function () {
+				axios.get('/getAdderss', {			//AJAX
+				}).then((response) => {
+					this.arr = response.data;
+					// console.log(response)
+				}).catch(function (error) {
+					console.log(error);
+				});
+			},
+			methods:{
+				enter(index,item){
+					this.active=index;
+					end.addres = item.province +' '+ item.city +' '+ item.stree +' '+ item.detailed;
+					end.name = item.name + ' ' +item.tell;
+					this.addressIndex = index;
+					console.log(end.addres);
+				},
+				mouseenterl(index){
+					this.mouseeAnter=index;
+				},
+				mouseleave(){
+					this.mouseeAnter = 0;
+				}
+			},
+			
+		})
+	//金额计算	
+		var end = new Vue({
+			el:'.orders_box',
+			data:{
+				// active:false,
+// 				mouseeAnter:0,
+				actual_pay:0,
+				goods:[],
+				addres : "",
+				name : "",
+				url:"/getOrderInfo",
+				afterUrl:""
+				
+			},
+			created: function () {
+				this.afterUrl =  this.getQueryVariable("all");
+				if(this.afterUrl == 1){
+					this.url = "/getAllOrderInfo"
+				}
+				axios.get(this.url, {			//AJAX
+				}).then((response) => {
+					this.goods = response.data;
+					// console.log(response)
+				}).catch(function (error) {
+					console.log(error);
+				});
+			},
+			methods:{
+				enter(e,item){
+					item.additional_price.isSelect = e.target.checked;
+					if(item.additional_price.isSelect){
+						// console.log(item.additional_price.isSelect);
+						item.total_prices = item.unit_price * item.nums + item.additional_price.freight_price + item.additional_price.Transport_insurance;
+					}else{
+						item.total_prices = item.unit_price * item.nums + item.additional_price.freight_price;
+					}
+					// console.log(item.total_prices);
+				},
+				getQueryVariable(variable) { 				//获取URL的参数方法
+					var query = window.location.search.substring(1);
+					var vars = query.split("&");
+					for (var i=0;i<vars.length;i++) {
+						var pair = vars[i].split("=");
+						if(pair[0] == variable){return pair[1];}
+					}
+					return(false);
+				},
+				payment(){
+					var product = [];
+					for (var i=0;i<this.goods.length;i++){
+						// console.log(this.goods[i].isSelect);
+						// console.log(this.goods[i].pro_id);
+						console.log(this.goods[i].additional_price.isSelect)
+						product[i] = {
+							pro_id:this.goods[i].pro_id,
+							isCheck:this.goods[i].additional_price.isSelect,
+							leaving_message:"无",
+							order_id:this.goods[i].order_id
+						}
+					}
+					axios.post('/payment', {			//AJAX
+						address:addr.arr[addr.addressIndex].add_id,
+						product: product,
+					}).then((response) => {
+							if(response.data=="购买成功"){
+								window.location.href="success.html";
+							}else if(response.data=="余额不足"){
+								window.location.href="fail.html";
+							}else{
+								window.location.href="fail.html";
+							}
+					}).catch(function (error) {
+						console.log(error);
+					});
+				}
+			},
+			watch:{
+				"goods":{
+					handler(){
+						this.actual_pay = 0;
+						this.goods.forEach((item)=>{
+							this.actual_pay +=item.total_prices
+						});
+					},
+					deep:true,
+				},
+				"addres":{
+					handler(){
+						// this.addres = addr.arr[0].province +' '+ addr.arr[0].city +' '+ addr.arr[0].stree +' '+ addr.arr[0].detailed;
+						// this.name = addr.arr[0].name + " " +addr.arr[0].tell;
+						// console.log(addr.addres);
+					},
+					immediate: true
+				}
+			},
+		})
+	</script>
+</html>
